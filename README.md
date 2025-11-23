@@ -1,68 +1,102 @@
-# Word2vec Gender Bias Explorer
+# Word2Vec Political Bias Explorer
 
-A tool to explore gender bias in sentences based on NLP word embeddings from Google News.
+An interactive Streamlit app for visualizing political associations encoded in pretrained word embeddings from Google News.
 
-Live demo:
-https://chanind.github.io/word2vec-gender-bias-explorer
+## Overview
 
-## Why?
+Word embeddings form the foundation of many AI systems, learning relationships between words from their co-occurrence in large text corpora. However, these representations can also absorb human biases present in the training data, including political ideology. This project reveals how even widely used embeddings like [GoogleNews Word2Vec](https://code.google.com/archive/p/word2vec/) encode partisan associations in language.
 
-AI learns from us, and learns the biases and prejudices that we teach it. Rather than trying to debias AI, this project tries to use the biases that are learned by AI as a way to show the that biases appear in human language. Also, I read the paper [Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings](https://proceedings.neurips.cc/paper/2016/file/a486cd07e4ac3d270571622f4f316ec5-Paper.pdf) and really wanted to do something fun with the concept!
+Prior research shows that various bias dimensions in word embeddings trained on a corpus of text can be identified by constructing a vector/subspace from paired examples and projecting words onto it. For instance, [Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings](https://proceedings.neurips.cc/paper/2016/file/a486cd07e4ac3d270571622f4f316ec5-Paper.pdf) explores gender bias, and [Studying Political Bias via Word Embeddings](https://dl.acm.org/doi/pdf/10.1145/3366424.3383560) explores political bias in word embeddings. 
 
-## How it works
+Inspired by [Word2Vec Gender Bias Explorer](https://chanind.github.io/word2vec-gender-bias-explorer), this version adapts the same PCA-based methodology to explore political bias. It projects words onto a binary axis (Democrat <-> Republican), while acknowledging that real-world bias is more complex than two binary extremes.
 
-This tool is based on the paper [Man is to Computer Programmer as Woman is to
-Homemaker? Debiasing Word Embeddings](https://proceedings.neurips.cc/paper/2016/file/a486cd07e4ac3d270571622f4f316ec5-Paper.pdf). In that paper, the authors looked at word embeddings, a popular AI technique for turning a word into a vector for training AI algorithms, and found that the word embeddings had picked up gender and racial biases from the text it was trained on. Essentially, the algorithm was inadvertently learning the biases that are present in real human language.
 
-The paper tries to remove those biases in the word embeddings, but this tool tries instead to simply show the biases that have been encoded in those word embeddings. This tool uses a pretrained [Google News word2vec dataset](https://code.google.com/archive/p/word2vec/).
+## Quick Start
 
-This tool works by trying to find a "gender vector" in the word embeddings by using [PCA](https://en.wikipedia.org/wiki/Principal_component_analysis) between pairs of male and female words, since these words should be semantically similar but differ only in the direction of gender. Then, gender bias in a word is determined simply by projecting it along this gender vector and seeing if it lies closer to the male or female groups of training words. The word pairs used for this are the following:
+### Installation
 
-- "she", "he"
-- "her", "his"
-- "woman", "man"
-- "Mary", "John"
-- "herself", "himself"
-- "daughter", "son"
-- "mother", "father"
-- "gal", "guy"
-- "girl", "boy"
+```bash
+git clone https://github.com/<your-username>/word2vec-political-bias-explorer.git
+cd word2vec-political-bias-explorer
 
-## Project structure and setup
-
-This project is divided into a website frontend, and a server backend, in respective folders.
-
-The server is written in Python using flask. It exposes a REST API with a single GET endpoint, `/detect` which requires passing a `sentence` query param. For example: `/detect?sentence=She is a nurse`. This endpoint will tokenize the sentence and return biases for each token, like below:
-
-```
-{
-  "results": [
-    {
-      "bias": -1,
-      "token": "she"
-    },
-    {
-      "bias": 0.22196795046329498,
-      "token": "is"
-    },
-    {
-      "bias": null,
-      "token": "a"
-    },
-    {
-      "bias": -0.1773415505886078,
-      "token": "nurse"
-    }
-  ]
-}
+python3 -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m spacy download en_core_web_md
 ```
 
-The website is a simple React app created using [create-react-app](https://create-react-app.dev). You can install the dependencies for this by running `yarn install`, and can run a development version of the frontend using `yarn start`.
+### Place the model file
+Download GoogleNews-vectors-negative300.bin and move it into the data/ folder. If you have a reduced .npz version of the embeddings, you can use that instead.
+```bash
+data/GoogleNews-vectors-negative300.bin
+```
 
-## I have an idea to improve this!
+### Generate biases
+Run the precomputation script once to create a bias lookup file.
+```bash
+python precalculate_biases.py
+```
 
-Please, submit a PR or open an issue! Any help or ideas to make this project better is greatly appreciated!
+### Running the App
 
-## License
+```bash
+streamlit run app.py
+```
 
-This project is available under a MIT license
+Then open the URL displayed in your terminal (default: http://localhost:8501).
+
+## How It Works
+
+**Load Pre-trained Embeddings**
+The GoogleNews Word2Vec dataset is loaded for word vector lookup.
+
+**Define Political Seed Pairs**
+Defining political dimension pairs is not as straightforward as defining gender pair antonyms (such as he/her, man/woman, guy/gal, etc.). Anchors were chosen based on the methodology in [Studying Political Bias via Word Embeddings](https://dl.acm.org/doi/pdf/10.1145/3366424.3383560) that analyzes the frequencies of words in known Republican/Democratic sources that describe the same or parallel concepts. Some chosen pairs include (democrat, republican), (liberal, conservative), (Dems, GOP), and (CNN, Fox).
+
+**Compute Political Axis with PCA**
+For each seed pair, we compute the difference vector and apply PCA. The first principal component defines the political axis.
+
+**Score and Visualize Words**
+Each word is projected onto the political axis and scaled to roughly [-1, 1]:
+- Negative scores indicate left/Democrat-leaning association (blue)
+- Positive scores indicate right/Republican-leaning association (red)
+
+**Interactive Exploration**
+Use the Streamlit interface to type in words or short phrases to see the bias score, a per-token breakdown, and additional analysis.
+
+## Project Structure
+
+```
+word2vec-political-bias-explorer/
+├── PcaBiasCalculator.py         # PCA-based bias computation
+├── PrecalculatedBiasCalculator.py
+├── precalculate_biases.py       # Generates data/biases.json
+├── parse_sentence.py            # spaCy parser for compound tokens
+├── streamlit_app.py             # Streamlit web interface
+├── requirements.txt             # Dependencies
+├── README.md
+└── data/
+    ├── GoogleNews-vectors-negative300.bin   # Word2Vec model (large file)
+    └── biases.json                         # Word → bias mapping
+```
+
+## Setup Notes
+
+**First Run:** Execute `precalculate_biases.py` once to generate the `biases.json.` before launching the app.
+
+**Memory Use:** The full GoogleNews model is 3GB+. For slower machines, you can pre-reduce the vocabulary (e.g., keep top 40k words).
+
+
+## References
+
+Bolukbasi, T. et al. (2016). Man is to Computer Programmer as Woman is to Homemaker? https://arxiv.org/abs/1607.06520
+
+Chanind (2020). Word2Vec Gender Bias Explorer. https://github.com/chanind/word2vec-gender-bias-explorer
+
+Gordon, J. et al. (2020). Studying Political Bias via Word Embeddings. https://dl.acm.org/doi/10.1145/3366424.3383560
+
+Mikolov, T. et al. (2013). Efficient Estimation of Word Representations in Vector Space. https://arxiv.org/abs/1301.3781
+
+Caliskan, A., Bryson, J., & Narayanan, A. (2017). Semantics derived automatically from language corpora contain human-like biases. Science 356(6334): 183–186.
+
+Badilla, P. et al. (2025). WEFE: A Python Library for Measuring and Mitigating Bias in Word Embeddings. https://www.jmlr.org/papers/v26/22-1133.html
