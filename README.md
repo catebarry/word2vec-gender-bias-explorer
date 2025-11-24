@@ -2,6 +2,11 @@
 
 An interactive Streamlit app for visualizing political associations encoded in pretrained word embeddings from Google News.
 
+## Live Demo
+
+The app is deployed on **Streamlit Cloud** and can be accessed here: [https://<catebarry>-word2vec-political-bias-explorer.streamlit.app](https://<catebarry>-word2vec-political-bias-explorer.streamlit.app)
+
+
 ## Overview
 
 Word embeddings form the foundation of many AI systems, learning relationships between words from their co-occurrence in large text corpora. However, these representations can also absorb human biases present in the training data, including political ideology. This project reveals how even widely used embeddings like [GoogleNews Word2Vec](https://code.google.com/archive/p/word2vec/) encode partisan associations in language.
@@ -13,7 +18,7 @@ Inspired by [Word2Vec Gender Bias Explorer](https://chanind.github.io/word2vec-g
 
 ## Quick Start
 
-### Installation
+### Clone Repo and Install Dependencies
 
 ```bash
 git clone https://github.com/<your-username>/word2vec-political-bias-explorer.git
@@ -24,7 +29,7 @@ source .venv/bin/activate       # Windows: .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-### Download the precomputed bias file
+### Download the Precomputed Bias File
 The GoogleNews Word2Vec model (~3GB) is not required for exploration. All word bias values have been precomputed and stored in a `biases.json` file, which you can download [here](https://drive.google.com/file/d/1qBhLFoIQm23vWuc-RMCjad3BjId3Jk4X/view?usp=sharing) and add to the data/ folder.
 
 *Note:* Alternatively, if you want to adjust the seed pairs or recompute biases, you can download [GoogleNews-vectors-negative300.bin](https://code.google.com/archive/p/word2vec/) (or create a reduced .npz version of the embeddings) and move it into the data/ folder. Then, you can run python `precalculate_biases.py` to make a bias lookup file. 
