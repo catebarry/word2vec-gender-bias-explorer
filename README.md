@@ -2,10 +2,6 @@
 
 An interactive Streamlit app for visualizing political associations encoded in pretrained word embeddings from Google News.
 
-## Live Demo
-
-The app is deployed on **Streamlit Cloud** and can be accessed here: [https://<catebarry>-word2vec-political-bias-explorer.streamlit.app](https://<catebarry>-word2vec-political-bias-explorer.streamlit.app)
-
 
 ## Overview
 
