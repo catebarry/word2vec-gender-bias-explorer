@@ -40,3 +40,5 @@ yarn.lock
 
 # --- Jupyter Notebooks cache ---
 .ipynb_checkpoints/
+
+tests/

@@ -26,7 +26,7 @@ python -m spacy download en_core_web_md
 ```
 
 ### Place the model file
-Download GoogleNews-vectors-negative300.bin and move it into the data/ folder. If you have a reduced .npz version of the embeddings, you can use that instead.
+Download [GoogleNews-vectors-negative300.bin](https://code.google.com/archive/p/word2vec/) and move it into the data/ folder. If you have a reduced .npz version of the embeddings, you can use that instead.
 ```bash
 data/GoogleNews-vectors-negative300.bin
 ```
@@ -72,7 +72,7 @@ word2vec-political-bias-explorer/
 ├── PrecalculatedBiasCalculator.py
 ├── precalculate_biases.py       # Generates data/biases.json
 ├── parse_sentence.py            # spaCy parser for compound tokens
-├── streamlit_app.py             # Streamlit web interface
+├── app.py                       # Streamlit web interface
 ├── requirements.txt             # Dependencies
 ├── README.md
 └── data/

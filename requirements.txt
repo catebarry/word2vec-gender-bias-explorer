@@ -1,7 +1,9 @@
-numpy
-scikit-learn
-gensim
-spacy
-streamlit
-pandas
-
+numpy>=1.23
+scikit-learn>=1.2
+gensim>=4.3
+spacy>=3.6
+streamlit>=1.30
+flask>=3.0
+pandas>=2.0
+plotly>=5.15
+matplotlib>=3.7

@@ -5,6 +5,8 @@ Helper script to pre-generate all word biases as a big JSON, so the server doesn
 import json
 from os import path
 from PcaBiasCalculator import PcaBiasCalculator
+import statistics
+import numpy as np
 
 
 def preprocess_biases():
@@ -19,6 +21,11 @@ def preprocess_biases():
         count += 1
         if count % 100000 == 0:
             print(f"done: {count} / {total_keys}")
+
+    # debug stats
+    #vals = [v for v in bias_mapping.values() if isinstance(v, (int,float))]
+    #print("bias stats: count", len(vals), "min", min(vals), "q1", np.percentile(vals,25), "median", np.median(vals), "mean", statistics.mean(vals), "q3", np.percentile(vals,75), "max", max(vals))
+
     print("writing biases")
     output_file = path.join(path.dirname(__file__), "data/biases.json")
     with open(output_file, "w") as outfile:
