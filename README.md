@@ -74,8 +74,9 @@ word2vec-political-bias-explorer/
 ├── requirements.txt                         # Dependencies
 ├── README.md
 └── data/
-    ├── GoogleNews-vectors-negative300.bin   # Word2Vec model (large file, optional)
-    └── biases.json                          # Word → bias mapping (upload or create yourself)
+    ├── GoogleNews-vectors-negative300.bin   # Word2Vec model (large file, gitignored)
+    ├── biases.json.gz                       # compressed version of biases.json
+    └── biases.json                          # Word → bias mapping (upload or create yourself, gitignored)
 ```
 
 ## Limitations & Feedback Disclaimer
