@@ -18,6 +18,7 @@ def load_calculator():
     return PrecalculatedBiasCalculator()
 
 calc = load_calculator()
+biases = calc.biases
 
 # --- Helper Functions ---
 
@@ -212,7 +213,7 @@ The arrows show bias direction and strength, pointing left for Democratic bias a
 # --- Curated words continuum ---
 # this section was created with help from ChatGPT 5.0 November, 2025 (see AI Assistance Statement)
 
-DATA = path.join(path.dirname(__file__), "data", "biases.json")
+#DATA = path.join(path.dirname(__file__), "data", "biases.json")
 
 # Edit this list to test words!
 TEST_WORDS = [
@@ -230,8 +231,8 @@ TEST_WORDS = [
     "police", "law_enforcement",
 ]
 
-with open(DATA, "r") as f:
-    biases = json.load(f)
+#with open(DATA, "r") as f:
+#    biases = json.load(f)
 
 rows = []
 for w in TEST_WORDS:

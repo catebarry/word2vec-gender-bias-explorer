@@ -1,7 +1,7 @@
 import re
 import json
 from os import path
-
+import gzip
 
 class PrecalculatedBiasCalculator:
     """
@@ -15,7 +15,7 @@ class PrecalculatedBiasCalculator:
         with open(bias_json) as json_file:
             self.biases = json.load(json_file)
     '''
-    
+
     # added for compressed file support
     def __init__(self, bias_json=None):
         base_dir = path.dirname(__file__)
